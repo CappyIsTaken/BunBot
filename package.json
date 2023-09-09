@@ -1,0 +1,17 @@
+{
+  "name": "bunbot",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/tough-cookie": "^4.0.2",
+    "axios": "^1.5.0",
+    "discord.js": "^14.13.0",
+    "tough-cookie": "^4.1.3"
+  }
+}
