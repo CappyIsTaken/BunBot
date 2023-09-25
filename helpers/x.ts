@@ -5,12 +5,11 @@ export function isX(url: string) {
 export function getXID(url: string) {
     url = url.split("?")[0]
     console.log(url)
-    console.log(url.split("/"))
     return url.split("/").at(-1)
 }
 
 export async function getXVideo(id: string) {
-    console.log(id)
+    
     const resp = await fetch(`https://cdn.syndication.twimg.com/tweet-result?id=${id}&token=${crypto.randomUUID()}`)
     const data = await resp.json()
     const video = data.mediaDetails[0]
