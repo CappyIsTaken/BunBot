@@ -3,10 +3,11 @@ from instagrapi.exceptions import LoginRequired
 import os
 import sys
 import requests
+import os
 
 def login_user():
     cl = Client()
-    session = cl.load_settings("session.json")
+    session = cl.load_settings(os.path.join(os.getcwd(), "session.json"))
     login_via_session = False
     login_via_pw = False
 
