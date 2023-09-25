@@ -6,7 +6,10 @@ import os
 
 def login_user():
     cl = Client()
-    session = cl.load_settings(os.path.join(os.getcwd(), "session.json"))
+    f = open("session.json", "w")
+    f.write("{}")
+    f.close()
+    session = cl.load_settings("session.json")
     login_via_session = False
     login_via_pw = False
 
