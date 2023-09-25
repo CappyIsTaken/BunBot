@@ -6,9 +6,6 @@ import os
 
 def login_user():
     cl = Client()
-    f = open("session.json", "w")
-    f.write("{}")
-    f.close()
     session = cl.load_settings("session.json")
     login_via_session = False
     login_via_pw = False
@@ -17,13 +14,20 @@ def login_user():
         try:
             cl.set_settings(session)
             cl.login(os.getenv("INSTA_USERNAME"), os.getenv("INSTA_PASSWORD"))
+            
             try:
                 cl.get_timeline_feed()
+                with open("session.json", "r") as f:
+                    if f.read() == "{}":
+                        cl.dump_settings("session.json")
             except LoginRequired:
                 old_session = cl.get_settings()
                 cl.set_settings({})
                 cl.set_uuids(old_session["uuids"])
                 cl.login(os.getenv("INSTA_USERNAME", "INSTA_PASSWORD"))
+                with open("session.json", "r") as f:
+                    if f.read() == "{}":
+                        cl.dump_settings("session.json")
             login_via_session = True
         except Exception as e:
             print(e)
@@ -32,6 +36,9 @@ def login_user():
         try:
             if cl.login(os.getenv("INSTA_USERNAME"), os.getenv("INSTA_PASSWORD")):
                 login_via_pw = True
+                with open("session.json", "r") as f:
+                    if f.read() == "{}":
+                        cl.dump_settings("session.json")
         except Exception as e:
             print(e)
             return
