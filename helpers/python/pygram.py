@@ -2,7 +2,6 @@ from instagrapi import Client
 from instagrapi.exceptions import LoginRequired
 import os
 import sys
-import requests
 import os
 
 def login_user():
