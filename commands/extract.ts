@@ -1,4 +1,5 @@
-import { getInstagramID, getInstagramVideo, isInstagram, loginToInstagram } from "../helpers/instagram";
+import { AttachmentBuilder } from "discord.js";
+import { getInstagramMediaURL, isInstagramURL } from "../helpers/instagram";
 import { getTiktokID, getTiktokVideo, isTiktok } from "../helpers/tiktok";
 import { getXID, getXVideo, isX } from "../helpers/x";
 import { Command } from "../structures/command";
@@ -27,10 +28,18 @@ const ExtractCommand: Command = {
             }
             return
         }
-        // if(isInstagram(url)) {
-        //     console.log("instagram!")
-        //     await loginToInstagram()
-        // }
+        if(isInstagramURL(url)) {
+            console.log("instagram!")
+            const mediaURL = await getInstagramMediaURL(url)
+            if(mediaURL) {
+                const media = await fetch(mediaURL)
+                await msg.channel.send({
+                    files: [
+                        new AttachmentBuilder(Buffer.from(await media.arrayBuffer()),{name: `${crypto.randomUUID()}.mp4`, description: ""})
+                    ]
+                })
+            }
+        }
     },
 }
 export default ExtractCommand
