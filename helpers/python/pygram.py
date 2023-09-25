@@ -1,9 +1,7 @@
 from instagrapi import Client
-from dotenv import load_dotenv
 import os
 import sys
 import requests
-load_dotenv()
 
 def main():
     try:

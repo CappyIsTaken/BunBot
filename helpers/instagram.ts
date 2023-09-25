@@ -3,7 +3,8 @@
 export async function getInstagramMediaURL(url : string) {
     const instagramPython = await Bun.spawn({
         cmd: ["python3", `${__dirname}/python/pygram.py`, url],
-        stdout: "pipe"
+        stdout: "pipe",
+        env: {...process.env}
     })
     const text = await new Response(instagramPython.stdout).text()
     return text
