@@ -29,15 +29,18 @@ const ExtractCommand: Command = {
             return
         }
         if(isInstagramURL(url)) {
-            console.log("instagram!")
+            const statusMessage = await msg.channel.send("Getting media from post!")
             const mediaURL = await getInstagramMediaURL(url)
             if(mediaURL) {
+                await statusMessage.edit("Found media, Downloading it...")
                 const media = await fetch(mediaURL)
-                await msg.channel.send({
+                await statusMessage.edit({
                     files: [
                         new AttachmentBuilder(Buffer.from(await media.arrayBuffer()),{name: `${crypto.randomUUID()}.mp4`, description: ""})
-                    ]
+                    ],
+                    content: `Your post has been successfully uploaded, ${msg.author}`
                 })
+
             }
         }
     },
