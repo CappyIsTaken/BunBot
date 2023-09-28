@@ -4,7 +4,6 @@ export function isX(url: string) {
 
 export function getXID(url: string) {
     url = url.split("?")[0]
-    console.log(url)
     return url.split("/").at(-1)
 }
 

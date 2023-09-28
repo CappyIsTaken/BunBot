@@ -2,12 +2,13 @@ import { AttachmentBuilder } from "discord.js";
 import { getTiktokID, getTiktokVideo, isTiktok } from "../helpers/tiktok";
 import { Command } from "../structures/command";
 import { MyClient } from "..";
-
+import {ownerOnly} from "../helpers/conditions"
 const ForceTaskRunCommand: Command = {
     name: "forcetask",
     aliases: ["ft"],
     cooldown: 0,
     deleteOriginalMessage: true,
+    condition: ownerOnly,
     async execute(msg, args) {
         const [taskName] = args
         const client = msg.client as MyClient

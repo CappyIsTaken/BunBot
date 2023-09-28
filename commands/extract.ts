@@ -3,28 +3,32 @@ import { AttachmentBuilder } from "discord.js";
 import { getTiktokID, getTiktokVideo, isTiktok } from "../helpers/tiktok";
 import { getXID, getXVideo, isX } from "../helpers/x";
 import { Command } from "../structures/command";
-
+import {serverOnly} from "../helpers/conditions"
+import { shortenURL } from "../helpers/urls";
 const ExtractCommand: Command = {
     name: "extract",
     aliases: ["e"],
     cooldown: 0,
+    condition: serverOnly,
     deleteOriginalMessage: true,
     async execute(msg, args) {
+        const statusMessage = await msg.channel.send("Extracting media...")
         const [url] = args
         if(isTiktok(url)) {
             const id = await getTiktokID(url) ?? ""
             const video = await getTiktokVideo(id)
+            const shortened = await shortenURL(video)
             if(video) {
-                await msg.reply(video)
+                await statusMessage.edit(`Your video has been extracted, ${msg.author}:\n${shortened}\nSource: Tiktok\nOriginal URL: <${url}>`)
             }
             return
         }
         if(isX(url)) {
             const id = getXID(url) ?? ""
-            console.log(id)
             const video = await getXVideo(id)
+            const shortened = await shortenURL(video)
             if(video) {
-                await msg.reply(video)
+                await statusMessage.edit(`Your video has been extracted, ${msg.author}:\nVideo URL: ${shortened}\nSource: X\nOriginal URL: <${url}>`)
             }
             return
         }

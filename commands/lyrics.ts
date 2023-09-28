@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuild
 import { searchSongs } from "../helpers/shazam";
 import { Command } from "../structures/command";
 import { getYoutubeData, isYoutubeURL } from "../helpers/youtube";
-
+import { serverOnly } from "../helpers/conditions";
 
 const truncateStr = (str : string, num : number) => (num > str.length) ? str : `${str.substring(0, num)}...`
 
@@ -10,6 +10,7 @@ const LyricsCommand : Command = {
     name: "lyrics",
     aliases: ["l"],
     cooldown: 0,
+    condition: serverOnly,
     deleteOriginalMessage: false,
     async execute(msg, args) {
         const name = args.join(" ")

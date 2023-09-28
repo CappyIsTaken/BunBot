@@ -1,4 +1,4 @@
-import {Client, ClientOptions, Collection, Events, GatewayIntentBits, Message, MessageCreateOptions, MessagePayload, Snowflake} from "discord.js"
+import {Client, ClientOptions, Collection, Events, GatewayIntentBits, Message, MessageCreateOptions, MessagePayload, Partials, Snowflake} from "discord.js"
 
 import {readdirSync} from "node:fs"
 
@@ -35,10 +35,15 @@ export class MyClient extends Client {
 
     createCommandsListener() {
         this.on(Events.MessageCreate, async (msg) => {
-            const data = this.getCommand(msg)
+            const data = this.parseCommand(msg)
             if(data.command && data.prefix) {
                 const cmd = this.commands.get(data.command)
                 if(cmd) {
+                    const canExecute = await cmd.condition(msg, data.args)
+                    if(!canExecute) {
+                        await msg.channel.send(`Can't execute ${data.command} as you don't meet the condition!`)
+                        return
+                    }
                     await cmd.execute(msg, data.args)
                     if(cmd.deleteOriginalMessage) {
                         await msg.delete()
@@ -60,25 +65,34 @@ export class MyClient extends Client {
     createReadyListener() {
         this.once(Events.ClientReady, async (c) => {
             console.log(`Ready! Logged in as: ${c.user.tag}`)
+            this.patchMentionPrefix()
             await this.setupCommands()
             await this.setupTasks()
-            if(this.prefixes[0] == "mention") {
-                this.prefixes[0] = `<@${this.user?.id}>`
-            }
-            for(const [key, value] of this.tasks) {
-                let task = cron.schedule(value.cron, async () => await value.execute(this), {
-                    timezone: value.timezone,
-                    scheduled: true
-                })
-                value.cronJob = task
-                task.start()
-            }
+            this.createTasks()   
         })
+    }
+
+    createTasks() {
+        for(const [_, value] of this.tasks) {
+            let task = cron.schedule(value.cron, async () => await value.execute(this), {
+                timezone: value.timezone,
+                scheduled: true
+            })
+            value.cronJob = task
+            task.start()
+        }
+        console.log(`Created ${this.tasks.size} tasks!`);
+        
+    }
+
+    patchMentionPrefix() {
+        
+        if(this.prefixes[0] == "mention") this.prefixes[0] = `<@${this.user?.id}>`
     }
 
 
 
-    getCommand(msg: Message<boolean>) {
+    parseCommand(msg: Message<boolean>) {
         const prefix = this.prefixes.find((p) => msg.content.startsWith(p))
         const args = msg.content.slice(prefix?.length).trim().split(/ +/)
         const command = args.shift()?.toLowerCase()
@@ -127,6 +141,7 @@ export class MyClient extends Client {
 }
 
 const client = new MyClient({
+    partials: [Partials.Channel, Partials.Message],
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages, GatewayIntentBits.MessageContent]
 }, {commandsDir: "/commands", prefixes: mentionedOr("!"), tasksDir: "/tasks"})
 
