@@ -1,10 +1,8 @@
 import { AttachmentBuilder } from "discord.js";
 // import { getInstagramMediaURL, isInstagramURL } from "../helpers/instagram";
-import { getTiktokID, getTiktokVideo, isTiktok } from "../helpers/tiktok";
-import { getXID, getXVideo, isX } from "../helpers/x";
 import { Command } from "../structures/command";
 import {serverOnly} from "../helpers/conditions"
-import { shortenURL } from "../helpers/urls";
+import { AutoParser, isTiktok, isX, shortenURL, TiktokParser, TwitterParser } from "../helpers/urls";
 const ExtractCommand: Command = {
     name: "extract",
     aliases: ["e"],
@@ -14,24 +12,18 @@ const ExtractCommand: Command = {
     async execute(msg, args) {
         const statusMessage = await msg.channel.send("Extracting media...")
         const [url] = args
-        if(isTiktok(url)) {
-            const id = await getTiktokID(url) ?? ""
-            const video = await getTiktokVideo(id)
-            const shortened = await shortenURL(video)
-            if(video) {
-                await statusMessage.edit(`Your video has been extracted, ${msg.author}:\n${shortened}\nSource: Tiktok\nOriginal URL: <${url}>`)
-            }
+        const parser = AutoParser.getParser(url)
+        if(!parser) {
+            await statusMessage.edit("Invalid URL!")
             return
         }
-        if(isX(url)) {
-            const id = getXID(url) ?? ""
-            const video = await getXVideo(id)
-            const shortened = await shortenURL(video)
-            if(video) {
+        const video = await parser.getMediaURL()
+        console.log(video)
+        if(video) {
+                const shortened = await shortenURL(video)
                 await statusMessage.edit(`Your video has been extracted, ${msg.author}:\nVideo URL: ${shortened}\nSource: X\nOriginal URL: <${url}>`)
-            }
-            return
         }
+        return
         // if(isInstagramURL(url)) {
         //     const statusMessage = await msg.channel.send("Getting media from post!")
         //     const mediaURL = await getInstagramMediaURL(url)

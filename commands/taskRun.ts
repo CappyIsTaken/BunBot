@@ -1,5 +1,4 @@
 import { AttachmentBuilder } from "discord.js";
-import { getTiktokID, getTiktokVideo, isTiktok } from "../helpers/tiktok";
 import { Command } from "../structures/command";
 import { MyClient } from "..";
 import {ownerOnly} from "../helpers/conditions"
