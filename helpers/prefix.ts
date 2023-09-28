@@ -1,4 +1,3 @@
-import { Client } from "discord.js";
 
 
 export function mentionedOr(...prefixes: string[]) : string[] {

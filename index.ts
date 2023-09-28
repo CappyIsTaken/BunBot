@@ -1,24 +1,37 @@
-import {Client, ClientOptions, Collection, Events, GatewayIntentBits, Message} from "discord.js"
+import {Client, ClientOptions, Collection, Events, GatewayIntentBits, Message, MessageCreateOptions, MessagePayload, Snowflake} from "discord.js"
 
 import {readdirSync} from "node:fs"
 
 import path from "path"
 import { mentionedOr } from "./helpers/prefix"
 import { Command } from "./structures/command"
+import { Task } from "./structures/task"
+import cron from "node-cron"
 
-class MyClient extends Client {
+type MyClientOptions = {
+    commandsDir: string,
+    tasksDir: string,
+    prefixes: string[],
+}
+
+
+export class MyClient extends Client {
     commands: Collection<string, Command> = new Collection()
+    tasks: Collection<string, Task> = new Collection()
     commandsDir = ""
+    tasksDir = ""
     prefixes: string[] = []
-    constructor(options: ClientOptions, commandsDir: string, prefixes: string[]) {
+    constructor(options: ClientOptions, myOptions: MyClientOptions) {
         super(options)
-        this.commandsDir = path.join(__dirname, commandsDir)
+        this.commandsDir = path.join(__dirname, myOptions.commandsDir)
         
-        this.prefixes = prefixes
-
+        this.prefixes = myOptions.prefixes
+        this.tasksDir = path.join(__dirname, myOptions.tasksDir)
         this.createReadyListener()
         this.createCommandsListener()
     }
+
+
 
     createCommandsListener() {
         this.on(Events.MessageCreate, async (msg) => {
@@ -35,15 +48,34 @@ class MyClient extends Client {
         })
     }
 
+    async sendMessageToUsers(users: Snowflake[], message: MessagePayload | MessageCreateOptions) {
+        users.forEach(async u => {
+            const user = await this.users.fetch(u)
+            if(user) {
+                await user.send(message)
+            }
+        })
+    }
+
     createReadyListener() {
         this.once(Events.ClientReady, async (c) => {
             console.log(`Ready! Logged in as: ${c.user.tag}`)
             await this.setupCommands()
+            await this.setupTasks()
             if(this.prefixes[0] == "mention") {
                 this.prefixes[0] = `<@${this.user?.id}>`
             }
+            for(const [key, value] of this.tasks) {
+                let task = cron.schedule(value.cron, async () => await value.execute(this), {
+                    timezone: value.timezone,
+                    scheduled: true
+                })
+                value.cronJob = task
+                task.start()
+            }
         })
     }
+
 
 
     getCommand(msg: Message<boolean>) {
@@ -77,11 +109,26 @@ class MyClient extends Client {
         }
     }
 
+    async setupTasks() {
+        const taskFiles = readdirSync(this.tasksDir).filter(file => file.endsWith('.ts'))
+        for(const file of taskFiles) {
+            const filePath = path.join(this.tasksDir, file)
+            const task : Task = (await import(filePath)).default
+            if("name" in task && "execute" in task && "cron" in task) {
+                this.tasks.set(task.name, task)
+                console.log(`Set task: ${task.name} to cron string: ${task.cron}`)
+            }
+            else {
+                console.log("Invalid file!")
+            }
+        }
+    }
+
 }
 
 const client = new MyClient({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages, GatewayIntentBits.MessageContent]
-}, "/commands", mentionedOr("!"))
+}, {commandsDir: "/commands", prefixes: mentionedOr("!"), tasksDir: "/tasks"})
 
 
 

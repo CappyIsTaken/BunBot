@@ -1,5 +1,5 @@
 import { AttachmentBuilder } from "discord.js";
-import { getInstagramMediaURL, isInstagramURL } from "../helpers/instagram";
+// import { getInstagramMediaURL, isInstagramURL } from "../helpers/instagram";
 import { getTiktokID, getTiktokVideo, isTiktok } from "../helpers/tiktok";
 import { getXID, getXVideo, isX } from "../helpers/x";
 import { Command } from "../structures/command";
@@ -28,21 +28,21 @@ const ExtractCommand: Command = {
             }
             return
         }
-        if(isInstagramURL(url)) {
-            const statusMessage = await msg.channel.send("Getting media from post!")
-            const mediaURL = await getInstagramMediaURL(url)
-            if(mediaURL) {
-                await statusMessage.edit("Found media, Downloading it...")
-                const media = await fetch(mediaURL)
-                await statusMessage.edit({
-                    files: [
-                        new AttachmentBuilder(Buffer.from(await media.arrayBuffer()),{name: `${crypto.randomUUID()}.mp4`, description: ""})
-                    ],
-                    content: `Your post has been successfully uploaded, ${msg.author}`
-                })
+        // if(isInstagramURL(url)) {
+        //     const statusMessage = await msg.channel.send("Getting media from post!")
+        //     const mediaURL = await getInstagramMediaURL(url)
+        //     if(mediaURL) {
+        //         await statusMessage.edit("Found media, Downloading it...")
+        //         const media = await fetch(mediaURL)
+        //         await statusMessage.edit({
+        //             files: [
+        //                 new AttachmentBuilder(Buffer.from(await media.arrayBuffer()),{name: `${crypto.randomUUID()}.mp4`, description: ""})
+        //             ],
+        //             content: `Your post has been successfully uploaded, ${msg.author}`
+        //         })
 
-            }
-        }
+        //     }
+        // }
     },
 }
 export default ExtractCommand
