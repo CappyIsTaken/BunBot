@@ -34,7 +34,6 @@ if(resp.ok) {
     const index = body.indexOf(search)+search.length
     if(index) {
         const url =  body.substring(index, index+6)
-        console.log(url)
         return "https://is.gd/" + url
     }
 }
@@ -70,8 +69,8 @@ export class TwitterParser extends URLParser {
         const data = await resp.json()
         const video = data.mediaDetails[0]
         const variants: any[] = video.video_info.variants
-        const sorted: any[] = variants.filter(v => "bitrate" in v).sort((a, b) => {
-            return a.bitrate - b.bitrate
+        const sorted: any[] = variants.filter(v => v.content_type.includes("video/mp4")).sort((a, b) => {
+            return b.bitrate - a.bitrate
         })
         return sorted[0].url
     }
@@ -108,6 +107,7 @@ export class TiktokParser extends URLParser {
 
 export class AutoParser {
     static getParser(url: string) : URLParser | undefined {
+        if(!url) return undefined
         if(isTiktok(url)) return new TiktokParser(url)
         if(isX(url)) return new TwitterParser(url)
     }

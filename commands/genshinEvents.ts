@@ -1,6 +1,5 @@
 import { AttachmentBuilder } from "discord.js";
 import { Command } from "../structures/command";
-import { MyClient } from "..";
 import {dmOnly} from "../helpers/conditions"
 import Paginator from "../helpers/pagination/Paginator";
 import Page from "../helpers/pagination/Page";
