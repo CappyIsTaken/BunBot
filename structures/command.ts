@@ -10,5 +10,5 @@ export type Command = {
     execute: ExecuteFunction,
     cooldown: number,
     deleteOriginalMessage: boolean
-    condition: ConditionFunction
+    condition?: ConditionFunction
 }

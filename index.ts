@@ -39,7 +39,8 @@ export class MyClient extends Client {
             if(data.command && data.prefix) {
                 const cmd = this.commands.get(data.command)
                 if(cmd) {
-                    const canExecute = await cmd.condition(msg, data.args)
+                    
+                    const canExecute = cmd.condition ? await cmd.condition(msg, data.args) : true
                     if(!canExecute) {
                         await msg.channel.send(`Can't execute ${data.command} as you don't meet the condition!`)
                         return

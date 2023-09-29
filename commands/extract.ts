@@ -7,7 +7,6 @@ const ExtractCommand: Command = {
     name: "extract",
     aliases: ["e"],
     cooldown: 0,
-    condition: serverOnly,
     deleteOriginalMessage: true,
     async execute(msg, args) {
         const statusMessage = await msg.channel.send("Extracting media...")
