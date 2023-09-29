@@ -46,7 +46,7 @@ export class MyClient extends Client {
                         return
                     }
                     await cmd.execute(msg, data.args)
-                    if(cmd.deleteOriginalMessage) {
+                    if(cmd.deleteOriginalMessage && msg.deletable) {
                         await msg.delete()
                     }
                 }
