@@ -128,7 +128,7 @@ export class MyClient extends Client {
         for(const file of taskFiles) {
             const filePath = path.join(this.tasksDir, file)
             const task : Task = (await import(filePath)).default
-            if("name" in task && "execute" in task && "cron" in task) {
+            if(task && "name" in task && "execute" in task && "cron" in task) {
                 this.tasks.set(task.name, task)
                 console.log(`Set task: ${task.name} to cron string: ${task.cron}`)
             }
