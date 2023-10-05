@@ -1,3 +1,4 @@
+import { InstagramClient } from "./instagram";
 
 export async function shortenURL(url: string) {
     var myHeaders = new Headers();
@@ -43,6 +44,10 @@ export function isTiktok(url: string) {
     return url.includes("tiktok.com")
 }
 
+export function isInstagram(url: string) {
+    return ["https://www.instagram.com/p/", "https://www.instagram.com/reel/"].some(u => url.startsWith(u))
+}
+
 
 export function isX(url: string) {
     return ["https://x.com", "https://twitter.com"].some(u => url.startsWith(u)) && url.includes("status")
@@ -51,6 +56,7 @@ export function isX(url: string) {
 
 abstract class URLParser {
     url: string
+    source: string = ""
     constructor(url: string) {
         this.url = url
     }
@@ -59,6 +65,7 @@ abstract class URLParser {
 }
 
 export class TwitterParser extends URLParser {
+    source: string = "X"
     async getPostID(): Promise<string | undefined> {
         this.url = this.url.split("?")[0]
         return this.url.split("/").at(-1)
@@ -78,6 +85,7 @@ export class TwitterParser extends URLParser {
 }
 
 export class TiktokParser extends URLParser {
+    source: string = "Tiktok"
     async getPostID(): Promise<string | undefined> {
         let realURL = this.url
         if (["https://vm.tiktok.com", "https://vt.tiktok.com"].some(u => this.url.startsWith(u))) {
@@ -105,11 +113,25 @@ export class TiktokParser extends URLParser {
 
 }
 
+export class InstagramParser extends URLParser {
+    source: string = "Instagram"
+    async getPostID() {
+        const regex = "(?:https?:\/\/)?(?:www.)?instagram.com\/?([a-zA-Z0-9\.\_\-]+)?\/([p]+)?([reel]+)?([tv]+)?([stories]+)?\/([a-zA-Z0-9\-\_\.]+)\/?([0-9]+)?"
+        return this.url.match(regex)?.at(6)  
+    }
+
+    async getMediaURL() {
+        const postID = await this.getPostID()
+        return "http://project-1337.rf.gd/insta?id="+postID
+    }
+}
+
 export class AutoParser {
     static getParser(url: string) : URLParser | undefined {
         if(!url) return undefined
         if(isTiktok(url)) return new TiktokParser(url)
         if(isX(url)) return new TwitterParser(url)
+        if(isInstagram(url)) return new InstagramParser(url)
     }
 }
 

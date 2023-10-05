@@ -1,44 +1,34 @@
-// import { shortenURL } from "../helpers/urls";
+// import { AttachmentBuilder } from "discord.js";
+// import { InstagramClient } from "../helpers/instagram";
 // import { Task } from "../structures/task";
-// import {readFileSync, writeFileSync} from "fs"
-
+// import {readFile, writeFile} from "fs/promises"
 // const funnyRussianProgrammerTask : Task = {
 //     cron: "0 7 * * *",
 //     async execute(client) {
-//         const data = readFileSync("russianProgrammer.json", {encoding: "utf-8"})
-//         const body : string[] = JSON.parse(data)
-//         const resp = await fetch("https://www.tikwm.com/api/user/posts?user_id=7199104096706905094&count=6")
-//         if(resp.ok) {
-//             const respBody = await resp.json()
-//             const list: any[] = respBody.data.videos
-//             const ids : any[] = list.map(x => {
-//                 return {
-//                     "url": x.play,
-//                     "id": x.video_id
+//         const instagramClient = InstagramClient.fromUsernameAndPassword(process.env.INSTA_USERNAME, process.env.INSTA_PASSWORD)
+//         const data = await readFile("russianProgrammer.json", {encoding: "utf-8"})
+//         const json = JSON.parse(data)
+//         const userData = await instagramClient.getUser("python_is_trash")
+//         const posts = userData.graphql.user.edge_owner_to_timeline_media.edges
+//         for(let i = 0; i < 5; i++) {
+//             let p = posts[i].node
+//             if(!json.includes(p.shortcode)) {
+//                 if(json.length > 5) {
+//                     json.pop()
 //                 }
-//             })
-//             for(const id of ids) {
-//                 if(!body.includes(id.id)) {
-//                     if(body.length >= 6)
-//                         body.pop()
-//                     try {
-//                         await client.sendMessageToUsers(["207188862273978370", "279956479140954113"], {
-//                             content: `New video from russian programmer!!!!\n${await shortenURL(id.url)}`
-//                         })
-
-//                     }
-//                     catch(e) {
-//                         console.error(e);
-                        
-//                     }
-//                     body.push(id.id)
-//                 }
+//                 json.push(p.shortcode)
+//                 const postResp = await instagramClient.getPost(p.shortcode)
+//                 const videoUrl = postResp.items[0].video_versions[0].url
+//                 const videoData = await fetch(videoUrl)
+//                 await client.sendMessageToUsers(["279956479140954113", "207188862273978370"], {
+//                     content: "New post from funny russian programmer!",
+//                     files: [new AttachmentBuilder(Buffer.from(await videoData.arrayBuffer()))]
+//                 })
 //             }
-//             console.log(body)
-//             writeFileSync("russianProgrammer.json", JSON.stringify(body, null, 4), {
-//                 encoding: "utf-8"
-//             })
 //         }
+//         await writeFile("russianProgrammer.json", JSON.stringify(json), {
+//             encoding: "utf-8"
+//         })
 //     },
 //     timezone: "Asia/Jerusalem",
 //     name: "funnyRussianProgrammer"
