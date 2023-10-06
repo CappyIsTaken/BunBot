@@ -4,8 +4,10 @@ import {readFile, writeFile} from "fs/promises"
 const funnyRussianProgrammerTask : Task = {
     cron: "0 7 * * *",
     async execute(client) {
-        const file = Bun.file("russianProgrammer.json")
-        const json = await file.json()
+        const file = await readFile("russianProgrammer.json", {
+            encoding: "utf-8"
+        })
+        const json = JSON.parse(file)
         const postIdsResp = await fetch("https://berd-1337.riouwu.repl.co/insta/u?user=python_is_trash&c=5")
         const postIds = await postIdsResp.json()
         for(let i = 0; i < postIds.length; i++) {
