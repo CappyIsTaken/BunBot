@@ -122,7 +122,7 @@ export class InstagramParser extends URLParser {
 
     async getMediaURL() {
         const postID = await this.getPostID()
-        return "http://project-1337.rf.gd/insta?id="+postID
+        return "https://berd-1337.riouwu.repl.co/"+postID
     }
 }
 
