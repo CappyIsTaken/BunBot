@@ -2,7 +2,7 @@ import { AttachmentBuilder } from "discord.js";
 import { Task } from "../structures/task";
 import {readFile, writeFile} from "fs/promises"
 const funnyRussianProgrammerTask : Task = {
-    cron: "0 7 * * *",
+    cron: "0 * * * *",
     async execute(client) {
         const file = await readFile("russianProgrammer.json", {
             encoding: "utf-8"
