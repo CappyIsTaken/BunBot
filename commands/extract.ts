@@ -20,7 +20,7 @@ const ExtractCommand: Command = {
         console.log(video)
         if(video) {
                 const shortened = await shortenURL(video)
-                await statusMessage.edit(`Your video has been extracted, ${msg.author}:\nVideo URL: ${shortened}\nSource: ${parser.source}\nOriginal URL: <${url}>`)
+                await statusMessage.edit(`Your video has been extracted, ${msg.author}:\nWatch video directly [here](${shortened})\nSource: ${parser.source}\nOriginal Post [here](<${url}>)`)
         }
         return
         // if(isInstagramURL(url)) {
