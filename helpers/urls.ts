@@ -75,7 +75,8 @@ export class TwitterParser extends URLParser {
         const resp = await fetch(`https://syndication.twimg.com/tweet-result?id=${id}&token=12345`)
         const data = await resp.json()
         const video = data.mediaDetails[0]
-        if(video.type !== "video" || video.type !== "animated_gif") return undefined
+        if(video.type !== "video" && video.type !== "animated_gif") {
+        return undefined }
         const variants: any[] = video.video_info.variants
         const sorted: any[] = variants.filter(v => v.content_type.includes("video/mp4")).sort((a, b) => {
             return b.bitrate - a.bitrate
