@@ -1,4 +1,3 @@
-import { InstagramClient } from "./instagram";
 
 export async function shortenURL(url: string) {
     var myHeaders = new Headers();
@@ -64,6 +63,7 @@ abstract class URLParser {
     abstract getMediaURL(): Promise<string | undefined>
 }
 
+
 export class TwitterParser extends URLParser {
     source: string = "X"
     async getPostID(): Promise<string | undefined> {
@@ -72,7 +72,7 @@ export class TwitterParser extends URLParser {
     }
     async getMediaURL(): Promise<string | undefined> {
         const id = await this.getPostID()
-        const resp = await fetch(`https://cdn.syndication.twimg.com/tweet-result?id=${id}&token=${crypto.randomUUID()}`)
+        const resp = await fetch(`https://syndication.twimg.com/tweet-result?id=${id}&token=12345`)
         const data = await resp.json()
         const video = data.mediaDetails[0]
         if(video.type !== "video" || video.type !== "animated_gif") return undefined
