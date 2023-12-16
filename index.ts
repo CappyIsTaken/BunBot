@@ -1,12 +1,15 @@
 import {Client, ClientOptions, Collection, Events, GatewayIntentBits, Message, MessageCreateOptions, MessagePayload, Partials, Snowflake} from "discord.js"
 
 import {readdirSync} from "node:fs"
+import {config} from "dotenv"
 
 import path from "path"
 import { mentionedOr } from "./helpers/prefix"
 import { Command } from "./structures/command"
 import { Task } from "./structures/task"
 import cron from "node-cron"
+
+config()
 
 type MyClientOptions = {
     commandsDir: string,

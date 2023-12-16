@@ -22,7 +22,9 @@ const ExtractCommand: Command = {
                 const shortened = await shortenURL(video)
                 await statusMessage.edit(`Your video has been extracted, ${msg.author}:\nWatch video directly [here](${shortened})\nSource: ${parser.source}\nOriginal Post [here](<${url}>)`)
         }
-        return
+        else {
+            await statusMessage.edit("No video has been found!")
+        }
         // if(isInstagramURL(url)) {
         //     const statusMessage = await msg.channel.send("Getting media from post!")
         //     const mediaURL = await getInstagramMediaURL(url)
