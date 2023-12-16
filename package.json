@@ -2,7 +2,6 @@
   "name": "bunbot",
   "module": "index.ts",
   "devDependencies": {
-    "bun-types": "latest",
     "tsx": "^4.5.0"
   },
   "peerDependencies": {
