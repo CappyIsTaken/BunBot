@@ -44,7 +44,7 @@ export function isTiktok(url: string) {
 }
 
 export function isInstagram(url: string) {
-    return ["https://www.instagram.com/p/", "https://www.instagram.com/reel/"].some(u => url.startsWith(u))
+    return ["https://www.instagram.com/p/", "https://www.instagram.com/reels/"].some(u => url.startsWith(u))
 }
 
 
