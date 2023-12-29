@@ -19,10 +19,7 @@ const ExtractCommand: Command = {
         const video = await parser.getMediaURL()
         console.log(video)
         if(video) {
-                let shortened: string | undefined = video
-                if(parser.source !== "Instagram")
-                    shortened = await shortenURL(video)
-                await statusMessage.edit(`Your video has been extracted, ${msg.author}:\nWatch video directly [here](${shortened})\nSource: ${parser.source}\nOriginal Post [here](<${url}>)`)
+                await statusMessage.edit(`Your video has been extracted, ${msg.author}:\nWatch video directly [here](${video})\nSource: ${parser.source}\nOriginal Post [here](<${url}>)`)
         }
         else {
             await statusMessage.edit("No video has been found!")
