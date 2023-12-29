@@ -17,7 +17,7 @@ myHeaders.append("Sec-Fetch-User", "?1");
 myHeaders.append("TE", "trailers");
 
 var urlencoded = new URLSearchParams();
-urlencoded.append("url", url);
+urlencoded.append("url", encodeURIComponent(url));
 urlencoded.append("shorturl", "");
 urlencoded.append("opt", "0");
 
@@ -62,6 +62,8 @@ abstract class URLParser {
     abstract getPostID(): Promise<string | undefined>
     abstract getMediaURL(): Promise<string | undefined>
 }
+
+
 
 
 export class TwitterParser extends URLParser {
@@ -123,8 +125,7 @@ export class InstagramParser extends URLParser {
     }
 
     async getMediaURL() {
-        const postID = await this.getPostID()
-        return "https://berd-1337.riouwu.repl.co/insta/p/?id="+postID
+        return `https://mommyinsta.riouwu.repl.co/p/${await this.getPostID()}`
     }
 }
 
