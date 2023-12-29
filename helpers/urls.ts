@@ -125,8 +125,27 @@ export class InstagramParser extends URLParser {
     }
 
     async getMediaURL() {
-        return `https://mommyinsta.riouwu.repl.co/p/${await this.getPostID()}`
-    }
+        const data = new URLSearchParams();
+  data.append("url", this.url);
+  data.append("obj", "reels");
+  data.append("language", "en");
+  const headers = new Headers();
+  headers.append("Referer", "https://igdown.net");
+  headers.append("Origin", "https://igdown.net");
+  headers.append(
+    "Content-Type",
+    "application/x-www-form-urlencoded; charset=utf-8",
+  );
+  const resp = await fetch("https://social.ioconvert.com/instagram", {
+    method: "POST",
+    body: data,
+    headers: headers,
+  });
+  const body = await resp.json();
+  const key = body.data.key;
+  const id = body.data.video.all[0].id;
+  return `https://social.ioconvert.com/download?obj=reels&key=${key}&type=video&id=${id}&download=1&file_prefix=igDown&target_id=`
+}
 }
 
 export class AutoParser {
